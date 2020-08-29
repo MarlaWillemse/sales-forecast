@@ -1,0 +1,22 @@
+create pipfile
+join Description to ProductCode
+Keep invoice 
+remove Description
+account for missing days? 
+
+○ total daily expected sales over the period 01/07/2019 - 31/07/2019.
+○ You are only required to predict the ​ total ​ sales volume
+
+Consider outliers: groupby item, if price varies much, remove outlier
+
+Add dates 1-3 Jan, include SA holidays
+
+create month and date variables
+
+Check all folders, delete unnecessary
+
+Write readme
+
+Run all scripts from single py file
+
+Feature embedding: ProductCode & invoice

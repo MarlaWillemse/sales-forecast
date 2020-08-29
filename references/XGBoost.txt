@@ -1,0 +1,8 @@
+Mostly this one
+https://towardsdatascience.com/using-gradient-boosting-for-time-series-prediction-tasks-600fac66a5fc
+
+https://www.kaggle.com/dlarionov/feature-engineering-xgboost
+
+https://www.kaggle.com/furiousx7/xgboost-time-series
+
+https://machinelearningmastery.com/backtest-machine-learning-models-time-series-forecasting/
