@@ -1,15 +1,18 @@
 from sklearn.metrics import mean_squared_error
-sales_m_test = sales_m[sales_m['date_block_num']==33]
+import pandas as pd
+import numpy as np
+from preprocessing.data_utils import *
 
-preds = sales_m.copy()
-preds['date_block_num']=preds['date_block_num']+1
-preds = preds[preds['date_block_num']==33]
-preds = preds.rename(columns={'item_cnt_day':'preds_item_cnt_day'})
-preds = pd.merge(sales_m_test,preds,on = ['shop_id','item_id'],how='left')[['shop_id','item_id','preds_item_cnt_day','item_cnt_day']].fillna(0)
+train_x = pd.read_pickle("../data/interim/train_x.pkl")
+train_y = pd.read_pickle("../data/interim/train_y.pkl").fillna(value=0)
+test_x = pd.read_pickle("../data/interim/test_x.pkl")
+test_y = pd.read_pickle("../data/interim/test_y.pkl").fillna(value=0)
 
-# We want our predictions clipped at (0,20). Competition Specific
-preds['item_cnt_day'] = preds['item_cnt_day'].clip(0,20)
-preds['preds_item_cnt_day'] = preds['preds_item_cnt_day'].clip(0,20)
-baseline_rmse = np.sqrt(mean_squared_error(preds['item_cnt_day'],preds['preds_item_cnt_day']))
+train_preds = train_x['Vol_t-1'].fillna(value=0)
+test_preds = test_x['Vol_t-1'].fillna(value=0)
 
-print(baseline_rmse)
+train_baseline_rmse = np.sqrt(mean_squared_error(train_y, train_preds))
+test_baseline_rmse = np.sqrt(mean_squared_error(test_y, test_preds))
+
+print(f'Train baseline RMSE: {train_baseline_rmse}')
+print(f'Test baseline RMSE: {test_baseline_rmse}')
