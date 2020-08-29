@@ -7,8 +7,7 @@ import scipy
 from datetime import datetime, timedelta
 from sklearn.preprocessing import LabelEncoder
 
-pd.set_option('display.max_columns', 100)
-
+# pd.set_option('display.max_columns', 100)
 data = pd.read_pickle("../data/interim/data_xgboost.pkl")
 
 # TODO: Optimize n
@@ -47,6 +46,10 @@ train_cutoff_date = data.Date.min() + \
 train = data[data['Date'] >= train_cutoff_date]
 test = data[data['Date'] < train_cutoff_date]
 
+'''Input for future predictions'''
+
+future = data[data['Date'] == (data.Date.max())]
+
 '''Separate the target values from the predictors'''
 
 train_y = train['Volume']
@@ -55,6 +58,9 @@ del train
 test_y = test['Volume']
 test_x = test.drop('Volume', axis=1)
 del test
+train_all_y = data['Volume']
+train_all_x = data.drop('Volume', axis=1)
+del data
 
 '''Replace Date with a month and day ordinal variables'''
 
@@ -64,6 +70,12 @@ train_x = train_x.drop('Date', axis=1)
 test_x['Month'] = pd.DatetimeIndex(test_x['Date']).month*1
 test_x['Day'] = pd.DatetimeIndex(test_x['Date']).day*1
 test_x = test_x.drop('Date', axis=1)
+train_all_x['Month'] = pd.DatetimeIndex(train_all_x['Date']).month*1
+train_all_x['Day'] = pd.DatetimeIndex(train_all_x['Date']).day*1
+train_all_x = train_all_x.drop('Date', axis=1)
+future['Month'] = pd.DatetimeIndex(future['Date']).month*1
+future['Day'] = pd.DatetimeIndex(future['Date']).day*1
+future = future.drop('Date', axis=1)
 
 '''Create prediction input'''
 
@@ -72,9 +84,14 @@ train_y.to_csv("../data/interim/train_y_header.csv", header=True, index=False)
 test_x.to_csv("../data/interim/test_x_header.csv", header=True, index=False)
 test_y.to_csv("../data/interim/test_y_header.csv", header=True, index=False)
 
+# Don't feed header to model!
 train_x.to_csv("../data/interim/train_x.csv", header=False, index=False)
 train_y.to_csv("../data/interim/train_y.csv", header=False, index=False)
 test_x.to_csv("../data/interim/test_x.csv", header=False, index=False)
 test_y.to_csv("../data/interim/test_y.csv", header=False, index=False)
 
+train_all_x.to_csv("../data/interim/train_all_x.csv", header=False, index=False)
+train_all_y.to_csv("../data/interim/train_all_y.csv", header=False, index=False)
 
+future.to_csv("../data/interim/future_input.csv", header=False, index=False)
+future.to_csv("../data/interim/future_input_header.csv", header=True, index=False)
