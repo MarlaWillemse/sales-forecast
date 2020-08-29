@@ -34,6 +34,9 @@ data = data.drop('ProductCode', axis=1)
 
 # TODO: Perhaps create lag variables
 
+'''Sort on date and ProductCode'''
+data = data.sort_values(['Date', 'ProductCode_ordinal'])
+
 '''Train-test split'''
 
 nr_dates = data['Date'].nunique()
@@ -62,7 +65,16 @@ test_x['Month'] = pd.DatetimeIndex(test_x['Date']).month*1
 test_x['Day'] = pd.DatetimeIndex(test_x['Date']).day*1
 test_x = test_x.drop('Date', axis=1)
 
-train_x.to_pickle("../data/interim/train_x.pkl")
-train_y.to_pickle("../data/interim/train_y.pkl")
-test_x.to_pickle("../data/interim/test_x.pkl")
-test_y.to_pickle("../data/interim/test_y.pkl")
+'''Create prediction input'''
+
+train_x.to_csv("../data/interim/train_x_header.csv", header=True, index=False)
+train_y.to_csv("../data/interim/train_y_header.csv", header=True, index=False)
+test_x.to_csv("../data/interim/test_x_header.csv", header=True, index=False)
+test_y.to_csv("../data/interim/test_y_header.csv", header=True, index=False)
+
+train_x.to_csv("../data/interim/train_x.csv", header=False, index=False)
+train_y.to_csv("../data/interim/train_y.csv", header=False, index=False)
+test_x.to_csv("../data/interim/test_x.csv", header=False, index=False)
+test_y.to_csv("../data/interim/test_y.csv", header=False, index=False)
+
+
