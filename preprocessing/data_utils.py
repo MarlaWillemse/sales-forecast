@@ -4,6 +4,8 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import scipy
 
+root = '/home/marla/Desktop/sales_forecast'
+
 def eda(df):
     """
     Exploratory data analysis: print basic info about pandas dataframe
@@ -38,7 +40,7 @@ def boxplot(df, col, saveas):
     plt.figure(figsize=(10, 4))
     plt.xlim(df[col].min(), df[col].max() * 1.1)
     sns.boxplot(x=df[col])
-    return plt.savefig(f"../reports/figures/{saveas}.png")
+    return plt.savefig(root+f"/reports/figures/{saveas}.png")
 
 def downcast_dtypes(df):
     """
@@ -55,3 +57,32 @@ def downcast_dtypes(df):
     df[int_cols] = df[int_cols].astype(np.int16)
 
     return df
+
+def month_and_day_from_date(df):
+    """
+    Create Month and Date columns from Date
+    """
+
+    df['Month'] = pd.DatetimeIndex(df['Date']).month * 1
+    df['Day'] = pd.DatetimeIndex(df['Date']).day * 1
+    df = df.drop('Date', axis=1)
+    return df
+
+def reconstruct_date(df):
+    """
+    Reconstruct date 2019-MM-DD from 'Month' and 'Day' columns
+    """
+
+    df['Year'] = '2019'
+    df['Month'] = df['Month'].apply(str)
+    df['Day'] = df['Day'].apply(str)
+    df['Date'] = df['Year'].str \
+        .cat(df['Month'], sep="-")
+    df['Date'] = df['Date'].str \
+        .cat(df['Day'], sep="-")
+    df = df.drop('Year', axis=1)
+    df = df.drop('Month', axis=1)
+    df = df.drop('Day', axis=1)
+    df.Date = pd.to_datetime(df.Date)
+    return df
+

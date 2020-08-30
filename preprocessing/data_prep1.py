@@ -7,16 +7,13 @@ import scipy
 
 pd.set_option('display.max_columns', 100)
 
-raw_data_directory = "../data/raw/"
-data = pd.read_csv(
-    '{0}DS - case study 1 - add material - sales_volumes.csv'.format(
-        raw_data_directory))
-
-# TODO: Separate functions into data_utils and calls into run_data_prep
+root='/home/marla/Desktop/sales_forecast'
+raw = "/data/raw/"
+data = pd.read_csv(root+raw+'DS - case study 1 - add material - sales_volumes.csv')
 
 '''Exploratory data analysis'''
 
-eda(data)
+#eda(data)
 
 '''Remove unnecessary columns'''
 
@@ -60,7 +57,7 @@ data_pivot = data.pivot_table(index=['ProductCode'],
 
 data_pivot = downcast_dtypes(data_pivot)
 
-data_pivot.to_pickle("../data/interim/data_lstm.pkl")
+data_pivot.to_pickle(root+"/data/interim/data_lstm.pkl")
 
 '''Unstack the pivot'''
 
@@ -76,9 +73,7 @@ data = pd.merge(data_pivot,
 
 del data_pivot
 
-# TODO: Consider no invoice for products not sold on given day.
-#  For given product on a given day, volume is summed
-#  Feature for products sold together?
+# TODO: Feature encodings for ProductCode and Invoice
 
 '''Add UnitPrice values for days when product wasn't sold by filling
 with the mean UnitPrice for the ProductCode. '''
@@ -88,11 +83,11 @@ data['UnitPrice'] = data.groupby(['ProductCode'], sort=False) \
 
 data = downcast_dtypes(data)
 
-data.to_pickle("../data/interim/data_xgboost.pkl")
+data.to_pickle(root+"/data/interim/data_xgboost.pkl")
 
 del data
 
-# TODO: Normalize?
+# TODO: Normalize
 
 
 
