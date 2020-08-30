@@ -1,3 +1,5 @@
+import os
+from root import *
 import pickle
 import matplotlib.pyplot as plt
 import numpy as np
@@ -10,7 +12,6 @@ from preprocessing.data_utils import *
 
 pd.set_option('display.max_rows', 200)
 
-root = '/home/marla/Desktop/sales_forecast'
 train_x = pd.read_csv(root+"/data/interim/train_x.csv")
 train_y = pd.read_csv(root+"/data/interim/train_y.csv")
 test_x = pd.read_csv(root+"/data/interim/test_x.csv")
@@ -78,3 +79,6 @@ test_preds.to_csv(root+"/data/interim/test_preds_plot.csv", header=True,
 test_xgboost_rmse = np.sqrt(mean_squared_error(test_preds['Volume'],
                                                test_preds['Preds']))
 print(f'Test XGBoost RMSE: {test_xgboost_rmse}')
+
+plt.clf()
+plt.close("all")

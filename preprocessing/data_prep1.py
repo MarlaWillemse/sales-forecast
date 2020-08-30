@@ -1,4 +1,6 @@
 from preprocessing.data_utils import *
+import os
+from root import *
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -7,7 +9,6 @@ import scipy
 
 pd.set_option('display.max_columns', 100)
 
-root='/home/marla/Desktop/sales_forecast'
 raw = "/data/raw/"
 data = pd.read_csv(root+raw+'DS - case study 1 - add material - sales_volumes.csv')
 
@@ -85,9 +86,8 @@ data = downcast_dtypes(data)
 
 data.to_pickle(root+"/data/interim/data_xgboost.pkl")
 
-del data
-
 # TODO: Normalize
 
-
+plt.clf()
+plt.close("all")
 

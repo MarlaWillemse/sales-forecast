@@ -1,15 +1,15 @@
+import os
+from root import *
 from preprocessing.data_utils import *
 import numpy as np
 import pandas as pd
 import seaborn as sns
-import matplotlib.pyplot as plt
 import scipy
 from datetime import datetime, timedelta
 from sklearn.preprocessing import LabelEncoder
 
 pd.set_option('display.max_columns', 100)
 
-root = '/home/marla/Desktop/sales_forecast'
 data = pd.read_pickle(root+"/data/interim/data_xgboost.pkl")
 
 # TODO: Optimize n

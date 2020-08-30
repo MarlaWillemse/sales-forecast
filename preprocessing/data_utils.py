@@ -1,10 +1,11 @@
+import os
+from root import *
 import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import scipy
 
-root = '/home/marla/Desktop/sales_forecast'
 
 def eda(df):
     """

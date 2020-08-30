@@ -1,3 +1,5 @@
+import os
+from root import *
 import xgboost
 from xgboost import XGBRegressor
 import pickle
@@ -8,7 +10,6 @@ from datetime import datetime, timedelta
 
 pd.set_option('display.max_columns', 100)
 
-root = '/home/marla/Desktop/sales_forecast'
 train_all_x = pd.read_csv(root+"/data/interim/train_all_x.csv")
 train_all_y = pd.read_csv(root+"/data/interim/train_all_y.csv")
 train_future = pd.read_csv(root+"/data/interim/future_input.csv")
@@ -91,6 +92,8 @@ while train_future['Date'].iloc[0] < datetime.strptime('2019-07-31',
 '''Sum volume (over all products) per date'''
 preds = preds.groupby(['Date']).sum()
 preds = preds.reset_index()
+preds.to_csv(root+"/data/processed/predictions.csv", header=True,
+             index=False)
 
 '''Concatenate future predictions to past values and test predictions'''
 
@@ -121,8 +124,10 @@ plt.plot(test_preds_plot['Date'], test_preds_plot['Future_Volume'],
          label="Future Predictions")
 plt.xlabel('Date')
 plt.ylabel('Volume')
-plt.title('True a predicted volume: test set')
+plt.title('Past sales, test predictions, and future predictions')
 plt.legend()
 plt.xticks(rotation='50')
 plt.savefig(root+"/reports/figures/test_preds_vs_true.png")
-plt.show()
+
+plt.clf()
+plt.close("all")
