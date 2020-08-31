@@ -5,6 +5,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import scipy
+from datetime import timedelta, date
 
 
 def eda(df):
@@ -43,6 +44,7 @@ def boxplot(df, col, saveas):
     sns.boxplot(x=df[col])
     return plt.savefig(root+f"/reports/figures/{saveas}.png")
 
+
 def downcast_dtypes(df):
     """
     Reduce precision of numeric data to reduce memory cost
@@ -59,6 +61,7 @@ def downcast_dtypes(df):
 
     return df
 
+
 def month_and_day_from_date(df):
     """
     Create Month and Date columns from Date
@@ -68,6 +71,7 @@ def month_and_day_from_date(df):
     df['Day'] = pd.DatetimeIndex(df['Date']).day * 1
     df = df.drop('Date', axis=1)
     return df
+
 
 def reconstruct_date(df):
     """
@@ -86,4 +90,9 @@ def reconstruct_date(df):
     df = df.drop('Day', axis=1)
     df.Date = pd.to_datetime(df.Date)
     return df
+
+
+def daterange(date1, date2):
+    for n in range(int((date2 - date1).days)+1):
+        yield date1 + timedelta(n)
 

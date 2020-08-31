@@ -44,6 +44,22 @@ data['Date'] = data['Date'].str[:11]
 # data['Time'] = data['Date'].str[11:16]
 data['Date'] = pd.to_datetime(data['Date'])
 
+'''Join missing dates'''
+
+'''List of dates between start and end date'''
+start_dt = date(2019, 1, 1)
+end_dt = date(2019, 6, 30)
+all_dates = []
+for dt in daterange(start_dt, end_dt):
+    all_dates.append(dt.strftime("%Y-%m-%d"))
+'''list to df'''
+all_dates = pd.DataFrame(all_dates, columns=['Date'])
+'''Same date format to merge on'''
+data.Date = pd.to_datetime(data.Date)
+all_dates.Date = pd.to_datetime(all_dates.Date)
+'''Merge'''
+data = pd.merge(all_dates, data, on='Date', how='left')
+
 '''Pivot data so that each item is represented for each date.
 Sum Volume if product is represented > once and fill missing values
 with zero.'''
