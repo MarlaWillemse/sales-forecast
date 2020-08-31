@@ -14,6 +14,7 @@ data = pd.read_pickle(root+"/data/interim/data_xgboost.pkl")
 
 # TODO: Optimize n
 n = 8
+# lags = [1, 2, 3, 4, 5, 6, 7, 14, 21, 28]
 lags = list(range(1, (n+1)))
 for lag in lags:
     data[f'Vol_t-{lag}'] = data.sort_values('Date').groupby\
@@ -21,6 +22,7 @@ for lag in lags:
 
 '''Remove first n dates for which not all lag variables are available'''
 
+#data = data[data['Date'] > (data.Date.min() + timedelta(days=lags.max))]
 data = data[data['Date'] > (data.Date.min() + timedelta(days=n))]
 
 '''Replace ProductCode with ordinal encodings'''

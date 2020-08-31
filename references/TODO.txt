@@ -20,3 +20,5 @@ Write readme
 Run all scripts from single py file
 
 Feature embedding: ProductCode & invoice
+
+delete dfs after script runs

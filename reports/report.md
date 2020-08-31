@@ -1,7 +1,7 @@
 ## Sales Forecast
-
-![](figures/test_preds_vs_true.png)
-
+ 
+![](/home/marla/Desktop/sales_forecast/reports/figures/test_preds_vs_true.png)
+ 
 |    | Date       |   Predicted Volume |
 |---:|:-----------|-------------------:|
 |  0 | 2019-07-01 |             144620 |

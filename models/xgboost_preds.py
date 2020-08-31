@@ -116,6 +116,7 @@ test_preds_plot['Date'] = test_preds_plot['Date']\
 
 '''Plot'''
 
+plt.figure(figsize=(17, 8))
 plt.plot(test_preds_plot['Date'], test_preds_plot['Volume'],
          label="Past Volume")
 plt.plot(test_preds_plot['Date'], test_preds_plot['Preds'],
