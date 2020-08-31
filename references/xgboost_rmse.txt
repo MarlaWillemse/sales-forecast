@@ -1,0 +1,27 @@
+Per item:
+
+lags = [1, 2, 3, 4, 5, 6, 7]
+validation_0-rmse:100.61108	validation_1-rmse:109.53047
+Test XGBoost RMSE daily forecast: 31908.613988956604
+
+lags = [1, 2, 3, 4, 5, 6, 7, 14, 21, 28]
+validation_0-rmse:93.13240	validation_1-rmse:115.83375
+Test XGBoost RMSE daily forecast: 33367.37091878076
+
+After adding missing dates:
+lags = [1, 2, 3, 4, 5, 6, 7, 14, 21, 28]
+validation_0-rmse:93.13240      validation_1-rmse:115.83375
+Test XGBoost RMSE daily forecast: 33367.37091878076
+
+Lags: 'Vol_t-1', 'Vol_t-2', 'Vol_t-3', 'Vol_t-7', 'Vol_t-14', 'Vol_t-21', 'Vol_t-28'
+validation_0-rmse:92.57544	validation_1-rmse:115.96518
+Test XGBoost RMSE daily forecast: 31946.418979103455
+
+Fixed train-test split, included 7 days + 14, 21, 28, remove outliers vol > 5,000
+validation_0-rmse:102.05073     validation_1-rmse:94.09261
+Test XGBoost RMSE daily forecast: 26805.985231623752
+
+summed over products: 
+validation_0-rmse:21282.90039	validation_1-rmse:22947.39453
+Test XGBoost RMSE daily forecast: 22947.393830994388
+

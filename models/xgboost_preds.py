@@ -15,31 +15,31 @@ train_all_y = pd.read_csv(root+"/data/interim/train_all_y.csv")
 future_input = pd.read_csv(root+"/data/interim/future_input.csv")
 test_preds_plot = pd.read_csv(root+"/data/interim/test_preds_plot.csv")
 
-# '''Define the model'''
-#
-# model = XGBRegressor(
-#     max_depth=8,
-#     n_estimators=1000,
-#     min_child_weight=300,
-#     colsample_bytree=0.8,
-#     subsample=0.8,
-#     eta=0.3,
-#     seed=42)
-#
-# '''Train the model'''
-#
-# model = model.fit(
-#     train_all_x,
-#     train_all_y,
-#     eval_metric="rmse",
-#     verbose=True,
-#     #early_stopping_rounds=10
-# )
-#
-# '''save model to file'''
-#
-# pickle.dump(model, open(root+"/models_trained/xgboost_2.pickle.dat",
-#                         "wb"))
+'''Define the model'''
+
+model = XGBRegressor(
+    max_depth=8,
+    n_estimators=1000,
+    min_child_weight=300,
+    colsample_bytree=0.8,
+    subsample=0.8,
+    eta=0.3,
+    seed=42)
+
+'''Train the model'''
+
+model = model.fit(
+    train_all_x,
+    train_all_y,
+    eval_metric="rmse",
+    verbose=True,
+    #early_stopping_rounds=10
+)
+
+'''save model to file'''
+
+pickle.dump(model, open(root+"/models_trained/xgboost_2.pickle.dat",
+                        "wb"))
 
 model = pickle.load(open(root+"/models_trained/xgboost_2.pickle.dat",
                          "rb"))

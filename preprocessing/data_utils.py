@@ -94,11 +94,25 @@ def reconstruct_date(df):
 
 
 def daterange(date1, date2):
+    '''
+    Prints all the dates between the start and end date
+
+    :param date1: datetime object- start date
+    :param date2: datetime object- end date
+    :return: an iterable of dates
+    '''
     for n in range(int((date2 - date1).days)+1):
         yield date1 + timedelta(n)
 
 
 def normalize(df, column):
+    '''
+    Performs min-max scaling on a column
+
+    :param df: pandas df
+    :param column: string- name of pandas column to normalize
+    :return: an iterable of dates
+    '''
     x = df[column].values.reshape(-1, 1)
     min_max_scaler = MinMaxScaler()
     x_scaled = MinMaxScaler().fit_transform(x)
@@ -107,6 +121,13 @@ def normalize(df, column):
 
 
 def unnormalize(df, column):
+    '''
+    Performs inverse transforms min-max scaling on a column
+
+    :param df: pandas df
+    :param column: string- name of pandas column to normalize
+    :return: an iterable of dates
+    '''
     x_scaled = df[column].values.reshape(-1, 1)
     min_max_scaler = MinMaxScaler()
     obj = min_max_scaler.fit(x_scaled)

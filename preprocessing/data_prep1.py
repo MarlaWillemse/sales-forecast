@@ -104,8 +104,6 @@ data = downcast_dtypes(data)
 # data = normalize(data, 'Volume')
 # data = normalize(data, 'UnitPrice')
 
-print(data.head)
-
 data.to_pickle(root+"/data/interim/data_xgboost.pkl")
 
 # TODO: Normalize

@@ -15,11 +15,9 @@ text_file = open(root+"/data/processed/preds_table.md", "w")
 n = text_file.write(preds_md)
 text_file.close()
 
-# file = open(root+"/reports/figures/report.md", "a")
-# file.write("## Sales Forecast\n")
-
 file = open(root+"/reports/report.md", "w")
 file.write("## Sales Forecast\n \n")
+file.write("### This forecast was generated with an XGBoost model\n \n")
 file.write(f'![]({root}/reports/figures/test_preds_vs_true.png)\n \n')
 file.write(preds_md)
 file.close()
