@@ -68,6 +68,13 @@ test_preds = test_preds.sort_values(by=['Date'])
 test_preds['Preds'] = pd.DataFrame(preds)
 test_preds['Volume'] = test_y.copy()
 
+# '''Inverse transform normalization'''
+#
+# test_preds = unnormalize(test_preds, 'Preds')
+# test_preds = unnormalize(test_preds, 'Volume')
+
+print(test_preds)
+
 '''Sum volume (over all products) per date'''
 test_preds = test_preds.groupby(['Date']).sum()
 test_preds = test_preds.reset_index()

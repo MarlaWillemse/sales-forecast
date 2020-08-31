@@ -6,6 +6,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import scipy
 from datetime import timedelta, date
+from sklearn.preprocessing import MinMaxScaler
 
 
 def eda(df):
@@ -95,4 +96,21 @@ def reconstruct_date(df):
 def daterange(date1, date2):
     for n in range(int((date2 - date1).days)+1):
         yield date1 + timedelta(n)
+
+
+def normalize(df, column):
+    x = df[column].values.reshape(-1, 1)
+    min_max_scaler = MinMaxScaler()
+    x_scaled = MinMaxScaler().fit_transform(x)
+    df[column] = pd.DataFrame(x_scaled)
+    return df
+
+
+def unnormalize(df, column):
+    x_scaled = df[column].values.reshape(-1, 1)
+    min_max_scaler = MinMaxScaler()
+    obj = min_max_scaler.fit(x_scaled)
+    x_unscaled = obj.inverse_transform(x_scaled)
+    df['Volume'] = pd.DataFrame(x_unscaled)
+    return df
 

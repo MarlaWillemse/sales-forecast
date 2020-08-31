@@ -15,31 +15,31 @@ train_all_y = pd.read_csv(root+"/data/interim/train_all_y.csv")
 future_input = pd.read_csv(root+"/data/interim/future_input.csv")
 test_preds_plot = pd.read_csv(root+"/data/interim/test_preds_plot.csv")
 
-'''Define the model'''
-
-model = XGBRegressor(
-    max_depth=8,
-    n_estimators=1000,
-    min_child_weight=300,
-    colsample_bytree=0.8,
-    subsample=0.8,
-    eta=0.3,
-    seed=42)
-
-'''Train the model'''
-
-model = model.fit(
-    train_all_x,
-    train_all_y,
-    eval_metric="rmse",
-    verbose=True,
-    #early_stopping_rounds=10
-)
-
-'''save model to file'''
-
-pickle.dump(model, open(root+"/models_trained/xgboost_2.pickle.dat",
-                        "wb"))
+# '''Define the model'''
+#
+# model = XGBRegressor(
+#     max_depth=8,
+#     n_estimators=1000,
+#     min_child_weight=300,
+#     colsample_bytree=0.8,
+#     subsample=0.8,
+#     eta=0.3,
+#     seed=42)
+#
+# '''Train the model'''
+#
+# model = model.fit(
+#     train_all_x,
+#     train_all_y,
+#     eval_metric="rmse",
+#     verbose=True,
+#     #early_stopping_rounds=10
+# )
+#
+# '''save model to file'''
+#
+# pickle.dump(model, open(root+"/models_trained/xgboost_2.pickle.dat",
+#                         "wb"))
 
 model = pickle.load(open(root+"/models_trained/xgboost_2.pickle.dat",
                          "rb"))
@@ -76,8 +76,9 @@ while future_input['Date'].iloc[0] < datetime.strptime('2019-07-31',
 
     '''Limit number of lag variables '''
     limited_vars = ['UnitPrice', 'Vol_t-1', 'Vol_t-2', 'Vol_t-3',
-                    'Vol_t-7', 'Vol_t-14', 'Vol_t-21', 'Vol_t-28',
-                    'ProductCode_ordinal', 'Month', 'Day', 'Weekday']
+                'Vol_t-4', 'Vol_t-5', 'Vol_t-6', 'Vol_t-7',
+                'Vol_t-14', 'Vol_t-21', 'Vol_t-28',
+                'ProductCode_ordinal', 'Month', 'Day', 'Weekday']
     future_input_limited = future_input[limited_vars]
 
     '''Make predictions'''
@@ -95,6 +96,8 @@ while future_input['Date'].iloc[0] < datetime.strptime('2019-07-31',
     loopdate = future_input['Date'].iloc[0]
     preds = pd.concat([preds, pred_append])
 
+# '''Inverse transform normalization'''
+# preds = unnormalize(preds, 'Future_Volume')
 
 '''Sum volume (over all products) per date'''
 

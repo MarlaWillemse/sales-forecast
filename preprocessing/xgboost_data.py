@@ -51,8 +51,8 @@ train_proportion = int(nr_dates*0.7)
 train_cutoff_date = data.Date.min() + \
                     timedelta(days=(max(lags)+train_proportion))
 
-train = data[data['Date'] >= train_cutoff_date]
-test = data[data['Date'] < train_cutoff_date]
+train = data[data['Date'] <= train_cutoff_date]
+test = data[data['Date'] > train_cutoff_date]
 
 '''Input for future predictions'''
 
@@ -77,11 +77,12 @@ test_x = month_and_day_from_date(test_x)
 train_all_x = month_and_day_from_date(train_all_x)
 
 '''To avoid overfitting, limit the number of lag variables: use only 
-1, 2, 3, 7, 14, 21, and 28 days ago'''
+last 7 days and 14, 21, and 28 days ago'''
 
 limited_vars = ['UnitPrice', 'Vol_t-1', 'Vol_t-2', 'Vol_t-3',
-                   'Vol_t-7', 'Vol_t-14', 'Vol_t-21', 'Vol_t-28',
-                   'ProductCode_ordinal', 'Month', 'Day', 'Weekday']
+                'Vol_t-4', 'Vol_t-5', 'Vol_t-6', 'Vol_t-7',
+                'Vol_t-14', 'Vol_t-21', 'Vol_t-28',
+                'ProductCode_ordinal', 'Month', 'Day', 'Weekday']
 
 train_x = train_x[limited_vars]
 test_x = test_x[limited_vars]
@@ -105,3 +106,4 @@ train_all_y.to_csv(root+"/data/interim/train_all_y.csv", header=True,
 
 future.to_csv(root+"/data/interim/future_input.csv", header=True,
               index=False)
+

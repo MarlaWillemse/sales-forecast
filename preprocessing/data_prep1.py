@@ -29,7 +29,7 @@ boxplot(data, col='Volume', saveas='volume_boxplot')
 '''Remove entries where Volume is beyond [-10,000; 10;000}
 or Value is above 200,000. This is a subjective choice. '''
 
-data = data[(data.Volume > -10000) & (data.Volume < 10000)]
+data = data[(data.Volume > -5000) & (data.Volume < 5000)]
 data = data[data.UnitPrice < 200000]
 
 boxplot(data, col='UnitPrice', saveas='price_boxplot_no_outliers')
@@ -99,6 +99,12 @@ data['UnitPrice'] = data.groupby(['ProductCode'], sort=False) \
     ['UnitPrice'].apply(lambda x: x.fillna(x.mean()))
 
 data = downcast_dtypes(data)
+
+# '''Normalize'''
+# data = normalize(data, 'Volume')
+# data = normalize(data, 'UnitPrice')
+
+print(data.head)
 
 data.to_pickle(root+"/data/interim/data_xgboost.pkl")
 
