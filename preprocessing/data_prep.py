@@ -14,7 +14,7 @@ data = pd.read_csv(root+raw+'DS - case study 1 - add material - sales_volumes.cs
 
 '''Exploratory data analysis'''
 
-#eda(data)
+eda(data)
 
 '''Remove unnecessary columns'''
 
@@ -61,8 +61,8 @@ all_dates.Date = pd.to_datetime(all_dates.Date)
 data = pd.merge(all_dates, data, on='Date', how='left')
 
 '''Pivot data so that each item is represented for each date.
-Sum Volume if product is represented > once and fill missing values
-with zero.'''
+Sum Volume if product is represented more than once and fill missing 
+values with zero.'''
 
 data.sort_values(by=['Date', 'ProductCode'])
 
