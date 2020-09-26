@@ -72,12 +72,12 @@ while future_input['Date'].iloc[0] < datetime.strptime('2019-07-31',
     future_input['Vol_t-1'] = input_t1
 
     '''Create Month and Day columns'''
-    future_input = month_and_day_from_date(future_input)
+    future_input = expand_date(future_input)
 
     '''Limit number of lag variables '''
-    limited_vars = ['UnitPrice', 'Vol_t-1', 'Vol_t-2', 'Vol_t-3',
+    limited_vars = ['Vol_t-1', 'Vol_t-2', 'Vol_t-3',
                 'Vol_t-4', 'Vol_t-5', 'Vol_t-6', 'Vol_t-7',
-                'Vol_t-14', 'Vol_t-21', 'Vol_t-28',
+                'Vol_t-14', 'Vol_t-21', 'Vol_t-28', 'UnitPrice',
                 'ProductCode_ordinal', 'Month', 'Day', 'Weekday']
     future_input_limited = future_input[limited_vars]
 

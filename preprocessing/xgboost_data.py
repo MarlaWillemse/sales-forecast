@@ -10,27 +10,48 @@ from sklearn.preprocessing import LabelEncoder
 
 pd.set_option('display.max_columns', 100)
 
-data = pd.read_pickle(root+"/data/interim/data_xgboost.pkl")
+data = pd.read_csv(root + "/data/interim/data_xgboost.csv")
 
 '''Create lag variables: volume at previous time points'''
 
-n = 28
-lags = list(range(1, (n+1)))
+n = 28  # 4 weeks
+lags = list(range(1, (n + 1)))
 for lag in lags:
-    data[f'Vol_t-{lag}'] = data.sort_values('Date').groupby\
-    (['ProductCode', 'UnitPrice'])['Volume'].shift(lag)
+    data[f'Vol_t-{lag}'] = data.sort_values('Date').groupby \
+        ('ProductCode')['Volume'].shift(lag)
 
-'''Remove first n dates for which not all lag variables are available'''
+'''Remove first n dates for which not all lag variables are 
+available'''
 
-data = data[data['Date'] > (data.Date.min() + timedelta(days=max(lags)))]
+data.Date = pd.to_datetime(data.Date)
+data = data[
+    data['Date'] > (data.Date.min() + timedelta(days=(n - 1)))]
+
+'''Create step-ahead feature, to predict volume for the following 
+7 days'''
+
+n = 7
+steps_ahead = list(range(1, n + 1))
+for step in steps_ahead:
+    data[f'Vol_t+{step}'] = data.sort_values('Date').groupby \
+        ('ProductCode')['Volume'].shift(-step)
+
+data = data[data['Date'] < (data.Date.max()
+                            - timedelta(days=max(steps_ahead)))]
+
+'''View a single ProductCode'''
+
+sanity_check2 = data.loc[data['ProductCode'] == '10002']
+sanity_check2.to_csv(root + "/data/interim/sanity_check2.csv",
+                     header=True, index=False)
+del sanity_check2
 
 '''Replace ProductCode with ordinal encodings'''
 
-# TODO: Replace ordinal encoding with learned feature embeddings with
-#  invoice and ProductCode
-
-data['ProductCode_ordinal'] = LabelEncoder().\
+data['ProductCode_ordinal'] = LabelEncoder(). \
     fit_transform(data['ProductCode'])
+
+# TODO: sum values across ProductCodes before training
 
 data = data.drop('ProductCode', axis=1)
 
@@ -106,4 +127,3 @@ train_all_y.to_csv(root+"/data/interim/train_all_y.csv", header=True,
 
 future.to_csv(root+"/data/interim/future_input.csv", header=True,
               index=False)
-

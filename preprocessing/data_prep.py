@@ -6,27 +6,31 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import scipy
+import itertools
 
 pd.set_option('display.max_columns', 100)
+pd.set_option('display.max_rows', 100)
 
 raw = "/data/raw/"
-data = pd.read_csv(root+raw+'DS - case study 1 - add material - sales_volumes.csv')
+input = 'DS - case study 1 - add material - sales_volumes.csv'
+data = pd.read_csv(root + raw + input)
 
 '''Exploratory data analysis'''
 
-eda(data)
+# eda(data)
 
 '''Remove unnecessary columns'''
 
 data = data.drop('Unnamed: 0', axis=1)
 data = data.drop('Description', axis=1)
+data = data.drop('InvoiceID', axis=1)
 
 '''Create box plots to observe outliers'''
 
 boxplot(data, col='UnitPrice', saveas='price_boxplot')
 boxplot(data, col='Volume', saveas='volume_boxplot')
 
-'''Remove entries where Volume is beyond [-10,000; 10;000}
+'''Remove entries where Volume is beyond [-10000, 10000]
 or Value is above 200,000. This is a subjective choice. '''
 
 data = data[(data.Volume > -5000) & (data.Volume < 5000)]
@@ -35,13 +39,9 @@ data = data[data.UnitPrice < 200000]
 boxplot(data, col='UnitPrice', saveas='price_boxplot_no_outliers')
 boxplot(data, col='Volume', saveas='volume_boxplot_no_outliers')
 
-# TODO remove entry where price differs greatly from product average
-
 '''Remove time from date and convert to date type'''
 
 data['Date'] = data['Date'].str[:11]
-# # Could keep time:
-# data['Time'] = data['Date'].str[11:16]
 data['Date'] = pd.to_datetime(data['Date'])
 
 '''Join missing dates'''
@@ -52,62 +52,72 @@ end_dt = date(2019, 6, 30)
 all_dates = []
 for dt in daterange(start_dt, end_dt):
     all_dates.append(dt.strftime("%Y-%m-%d"))
+
+'''List of unique ProductCodes'''
+unique_products = data.ProductCode.unique()
+
+'''All permutations of dates and ProductCodes'''
+combos = list(itertools.product(all_dates, unique_products))
+
+del all_dates
+del unique_products
+
 '''list to df'''
-all_dates = pd.DataFrame(all_dates, columns=['Date'])
+combos = pd.DataFrame(combos, columns=['Date', 'ProductCode'])
+
 '''Same date format to merge on'''
-data.Date = pd.to_datetime(data.Date)
-all_dates.Date = pd.to_datetime(all_dates.Date)
+combos.Date = pd.to_datetime(combos.Date)
+combos.Date = pd.to_datetime(combos.Date)
+
 '''Merge'''
-data = pd.merge(all_dates, data, on='Date', how='left')
+data = pd.merge(combos, data, how='left',
+                left_on=['Date', 'ProductCode'],
+                right_on=['Date', 'ProductCode'])
+del combos
 
-'''Pivot data so that each item is represented for each date.
-Sum Volume if product is represented more than once and fill missing 
-values with zero.'''
+'''Replace UnitPrice == 0 with nan, to be imputed with mean. 
+Assuming that items aren't free'''
 
-data.sort_values(by=['Date', 'ProductCode'])
+data['UnitPrice'] = data['UnitPrice'].replace(0, None)
 
-data_pivot = data.pivot_table(index=['ProductCode'],
-                              values=['Volume'],
-                              columns=['Date'],
-                              aggfunc=np.sum,
-                              fill_value=0)
+'''Fill NAN values: impute Volume with zero and UnitPrice with the 
+average per ProductCode'''
 
-data_pivot = downcast_dtypes(data_pivot)
+data.Volume = data.Volume.fillna(value=0)
 
-data_pivot.to_pickle(root+"/data/interim/data_lstm.pkl")
+data['UnitPrice'] = data['UnitPrice'] \
+    .fillna(data.groupby(['ProductCode'])['UnitPrice']
+            .transform('mean'))
 
-'''Unstack the pivot'''
+'''Per unique Date and ProductCode, sum Volume 
+and average UnitPrice'''
 
-data_pivot = data_pivot.unstack().reset_index(name='Volume')
-data_pivot = data_pivot[['Date', 'ProductCode', 'Volume']]
+data = data.groupby(['Date', 'ProductCode']) \
+    .agg({'Volume': 'sum', 'UnitPrice': 'mean'})
 
-'''Merge to add the UnitPrice'''
+'''Reset Multi-Index to columnar format'''
 
-data = pd.merge(data_pivot,
-                data[['ProductCode', 'Date', 'UnitPrice']],
-                on=['ProductCode', 'Date'],
-                how='left')
+data = data.reset_index()
 
-del data_pivot
-
-# TODO: Feature encodings for ProductCode and Invoice
-
-'''Add UnitPrice values for days when product wasn't sold by filling
-with the mean UnitPrice for the ProductCode. '''
-
-data['UnitPrice'] = data.groupby(['ProductCode'], sort=False) \
-    ['UnitPrice'].apply(lambda x: x.fillna(x.mean()))
-
+'''Downcast numeric types to reduce memory use'''
 data = downcast_dtypes(data)
 
 # '''Normalize'''
 # data = normalize(data, 'Volume')
 # data = normalize(data, 'UnitPrice')
 
-data.to_pickle(root+"/data/interim/data_xgboost.pkl")
+data.to_csv(root + "/data/interim/data_xgboost.csv", header=True,
+            index=False)
 
-# TODO: Normalize
+'''Sanity check: view data for one ProductCode'''
 
+sanity_check1 = data.loc[data['ProductCode'] == '10002']
+sanity_check1.to_csv(root + "/data/interim/sanity_check1.csv",
+                     header=True, index=False)
+
+del sanity_check1
+del data
+
+'''Erase matplotlib parameters'''
 plt.clf()
 plt.close("all")
-

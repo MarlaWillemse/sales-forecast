@@ -43,8 +43,10 @@ model = model.fit(
 
 '''Save model to file'''
 
-pickle.dump(model, open(root+"/models_trained/xgboost_1.pickle.dat", "wb"))
-#model = pickle.load(open(root+"/models_trained/xgboost_1.pickle.dat", "rb"))
+pickle.dump(model, open(root+"/models_trained/xgboost_1.pickle.dat",
+                        "wb"))
+# model = pickle.load(open(root+"/models_trained/xgboost_1.pickle.dat",
+#                          "rb"))
 
 '''Plot feature importance'''
 
